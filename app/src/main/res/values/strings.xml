@@ -121,6 +121,10 @@
     <string name="option_reset">Сбросить все данные</string>
     <string name="option_reset_confirm">Удалить все расписания, цвета и события?</string>
 
+    <string name="reminder_exact_alarm_title">Разрешение на точные будильники</string>
+    <string name="reminder_exact_alarm_message">Для срабатывания будильника о смене в точное время нужно разрешение на точные будильники в настройках Android. Без него уведомление может прийти не вовремя.</string>
+    <string name="reminder_exact_alarm_open_settings">Открыть настройки</string>
+
     <string name="help_title">ПОМОЩЬ</string>
     <string name="help_section_calendar">Главный экран</string>
     <string name="help_section_calendar_text">Календарь показывает до четырёх расписаний одновременно. В каждой ячейке дня — кружок на каждое расписание: цвет — тип смены, буква — первая буква названия типа (при включённой опции). Тап по дню открывает сведения о дне.\n\nСвайп влево/вправо переключает месяц. Рамки с месяцем и годом открывают списки для быстрого перехода.</string>

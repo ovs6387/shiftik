@@ -28,6 +28,24 @@ object ReminderScheduler {
     private const val HORIZON_DAYS = 62L
     private const val TYPES_COUNT = 9
 
+    /** Проверяет, может ли приложение ставить точные будильники (Android 12+). */
+    fun canScheduleExactAlarms(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            context.getSystemService(AlarmManager::class.java).canScheduleExactAlarms()
+        } else {
+            true
+        }
+    }
+
+    /** Intent для перехода в системные настройки точных будильников. */
+    fun exactAlarmSettingsIntent(): Intent {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+        } else {
+            Intent()
+        }
+    }
+
     fun scheduleAll(context: Context, state: AppState) {
         val settings = state.settings
         val today = LocalDate.now()

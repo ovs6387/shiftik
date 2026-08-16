@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +42,7 @@ import dev.shiftcalendar.app.R
 import dev.shiftcalendar.app.data.ShiftRepository
 import dev.shiftcalendar.app.data.defaultReminderTimes
 import dev.shiftcalendar.app.data.nonWorkShiftTypes
+import dev.shiftcalendar.app.reminder.ReminderScheduler
 import dev.shiftcalendar.app.ui.components.BackTopBar
 import dev.shiftcalendar.app.ui.components.ticker
 import java.util.Locale
@@ -51,13 +53,32 @@ fun SettingsScreen(
     onBack: () -> Unit,
 ) {
     val app by repository.state.collectAsState()
+    val context = LocalContext.current
     val tick = ticker()
     var confirmReset by remember { mutableStateOf(false) }
     var pickerType by remember { mutableStateOf<Int?>(null) }
+    var showExactAlarmDialog by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { }
+
+    val exactAlarmLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult(),
+    ) {
+        val currentSettings = app.settings
+        if (ReminderScheduler.canScheduleExactAlarms(context)) {
+            repository.updateSettings(
+                currentSettings.copy(
+                    reminderEnabled = true,
+                    reminderTimes = if (currentSettings.reminderTimes.isEmpty()) defaultReminderTimes else currentSettings.reminderTimes,
+                )
+            )
+            if (Build.VERSION.SDK_INT >= 33) {
+                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
 
     Scaffold(topBar = { BackTopBar(stringResource(R.string.options_title), onBack) }) { padding ->
         Column(
@@ -113,8 +134,16 @@ fun SettingsScreen(
                 checked = settings.reminderEnabled,
                 onToggle = {
                     val enable = !settings.reminderEnabled
-                    if (enable && Build.VERSION.SDK_INT >= 33) {
-                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    if (enable) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                            !ReminderScheduler.canScheduleExactAlarms(context)
+                        ) {
+                            showExactAlarmDialog = true
+                            return@SwitchRow
+                        }
+                        if (Build.VERSION.SDK_INT >= 33) {
+                            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        }
                     }
                     repository.updateSettings(
                         settings.copy(
@@ -254,6 +283,27 @@ fun SettingsScreen(
                     TextButton(onClick = { pickerType = null }) {
                         Text(stringResource(R.string.button_cancel))
                     }
+                }
+            },
+        )
+    }
+
+    if (showExactAlarmDialog) {
+        AlertDialog(
+            onDismissRequest = { showExactAlarmDialog = false },
+            title = { Text(stringResource(R.string.reminder_exact_alarm_title)) },
+            text = { Text(stringResource(R.string.reminder_exact_alarm_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    exactAlarmLauncher.launch(ReminderScheduler.exactAlarmSettingsIntent())
+                    showExactAlarmDialog = false
+                }) {
+                    Text(stringResource(R.string.reminder_exact_alarm_open_settings))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showExactAlarmDialog = false }) {
+                    Text(stringResource(R.string.button_cancel))
                 }
             },
         )

@@ -121,6 +121,10 @@
     <string name="option_reset">Reset all data</string>
     <string name="option_reset_confirm">Delete all schedules, colours and events?</string>
 
+    <string name="reminder_exact_alarm_title">Exact alarm permission</string>
+    <string name="reminder_exact_alarm_message">To ring the shift alarm at the exact time, Android needs permission for exact alarms. Without it the notification may arrive late.</string>
+    <string name="reminder_exact_alarm_open_settings">Open settings</string>
+
     <string name="help_title">HELP</string>
     <string name="help_section_calendar">Calendar</string>
     <string name="help_section_calendar_text">The calendar shows up to four schedules at once. Each day cell has a dot per schedule: colour = shift type, letter = first letter of the type name (when enabled). Tap a day for day details.\n\nSwipe left/right to change month. The month and year frames open quick navigation lists.</string>
