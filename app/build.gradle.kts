@@ -54,6 +54,16 @@ android {
     buildFeatures {
         compose = true
     }
+
+    applicationVariants.all {
+        val variant = this
+        if (variant.buildType.name == "release") {
+            outputs.all {
+                val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+                output.outputFileName = "Shiftik-v${variant.versionName}.apk"
+            }
+        }
+    }
 }
 
 dependencies {
