@@ -1,0 +1,28 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- calendar sheet -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,33 h48 a6,6 0 0 1 6,6 v33 a6,6 0 0 1 -6,6 h-48 a6,6 0 0 1 -6,-6 v-33 a6,6 0 0 1 6,-6 z" />
+    <!-- day / night dots (two rows of two) -->
+    <path
+        android:fillColor="#FB8C00"
+        android:pathData="M43,51 m-5,0 a5,5 0 1 0 10 0 a5,5 0 1 0 -10,0" />
+    <path
+        android:fillColor="#3F51B5"
+        android:pathData="M65,51 m-5,0 a5,5 0 1 0 10 0 a5,5 0 1 0 -10,0" />
+    <path
+        android:fillColor="#43A047"
+        android:pathData="M43,67 m-5,0 a5,5 0 1 0 10 0 a5,5 0 1 0 -10,0" />
+    <path
+        android:fillColor="#D81B60"
+        android:pathData="M65,67 m-5,0 a5,5 0 1 0 10 0 a5,5 0 1 0 -10,0" />
+    <!-- crescent moon (night shift) -->
+    <path
+        android:fillColor="#303F9F"
+        android:fillType="evenOdd"
+        android:pathData="M76,58 m-6,0 a6,6 0 1 0 12 0 a6,6 0 1 0 -12,0 M79,55 m-4.8,0 a4.8,4.8 0 1 0 9.6,0 a4.8,4.8 0 1 0 -9.6,0" />
+</vector>

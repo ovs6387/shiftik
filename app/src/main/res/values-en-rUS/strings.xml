@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Shiftik</string>
+
+    <string name="cal_title">SHIFT CALENDAR</string>
+    <string name="cal_select">Select:</string>
+    <string name="cal_today">TODAY</string>
+    <string name="today">Today</string>
+
+    <string name="month_jan">January</string>
+    <string name="month_feb">February</string>
+    <string name="month_mar">March</string>
+    <string name="month_apr">April</string>
+    <string name="month_may">May</string>
+    <string name="month_jun">June</string>
+    <string name="month_jul">July</string>
+    <string name="month_aug">August</string>
+    <string name="month_sep">September</string>
+    <string name="month_oct">October</string>
+    <string name="month_nov">November</string>
+    <string name="month_dec">December</string>
+
+    <string name="day_mon">Mo</string>
+    <string name="day_tue">Tu</string>
+    <string name="day_wed">We</string>
+    <string name="day_thu">Th</string>
+    <string name="day_fri">Fr</string>
+    <string name="day_sat">Sa</string>
+    <string name="day_sun">Su</string>
+
+    <string name="day_shift">Day</string>
+    <string name="night_shift">Night</string>
+    <string name="day_off">Day off</string>
+    <string name="holiday">Holiday</string>
+
+    <string name="menu_schedules">Schedules</string>
+    <string name="menu_adhoc">Shift override</string>
+    <string name="menu_options">Options</string>
+    <string name="menu_colors">Colours</string>
+    <string name="menu_shifts">Shift types</string>
+    <string name="menu_help">Help</string>
+    <string name="menu_about">About app</string>
+
+    <string name="shift_list_title">SCHEDULES</string>
+    <string name="shift_name">Name</string>
+    <string name="button_edit">Edit</string>
+    <string name="button_add">Add</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_save">Save</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_ok">OK</string>
+    <string name="button_yes">Yes</string>
+    <string name="button_no">No</string>
+    <string name="button_purge">Purge</string>
+    <string name="button_date">Date…</string>
+
+    <string name="shift_config_title">SCHEDULE CONFIGURATION</string>
+    <string name="hint_title">Name (up to 15 chars)</string>
+    <string name="seed_date">Seed date</string>
+    <string name="schedule_empty">Not configured</string>
+    <string name="pattern_row">%1$d d × type %2$d</string>
+    <string name="hint_days">Days</string>
+    <string name="shift_row">Type</string>
+    <string name="add_row">Add row</string>
+    <string name="type_n">Type %1$d</string>
+    <string name="slot_name">Schedule %1$d</string>
+
+    <string name="info_dialog">Information</string>
+    <string name="error_dialog">Error</string>
+    <string name="error_dialog_title">Enter a schedule name</string>
+    <string name="error_dialog_items">Add at least one schedule row</string>
+    <string name="error_dialog_days">Days must be at least 1</string>
+    <string name="button_save_confirm">Save schedule?</string>
+    <string name="button_purge_confirm">Purge schedule?</string>
+    <string name="button_cancel_confirm">Discard changes?</string>
+    <string name="deleted_confirm">Row deleted</string>
+
+    <string name="shifts_title">SHIFT TYPES</string>
+    <string name="shifts_hint">Visible</string>
+
+    <string name="adhoc_title">SHIFT OVERRIDES</string>
+    <string name="adhoc_empty">No overrides yet</string>
+    <string name="adhoc_add">Add override</string>
+    <string name="adhoc_edit">Edit override</string>
+    <string name="adhoc_date">Date</string>
+    <string name="adhoc_period">Period</string>
+    <string name="adhoc_shift">Schedule</string>
+    <string name="adhoc_type">Shift type</string>
+    <string name="adhoc_save">Save</string>
+    <string name="adhoc_delete">Delete</string>
+    <string name="adhoc_delete_confirm">Delete override?</string>
+    <string name="adhoc_pick_dates">Pick a period</string>
+    <string name="adhoc_pick_hint">Tap two days: period start and end</string>
+    <string name="adhoc_range">%1$s — %2$s</string>
+
+    <string name="colors_title">COLOURS</string>
+    <string name="colors_slot">Schedule</string>
+
+    <string name="options_title">OPTIONS</string>
+    <string name="option_sound">Click sound</string>
+    <string name="option_monday">Week starts on Monday</string>
+    <string name="option_shift_info">Show first letter in the dot</string>
+    <string name="option_cycle_past">Shifts into the past</string>
+    <string name="option_theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="option_reminder">Shift alarm</string>
+    <string name="option_reminder_hint">Each shift type has its own ring time. Defaults: Day 06:00, Night 17:00. No alarm on Day off and Holiday.</string>
+    <string name="reminder_time_off">Off</string>
+    <string name="reminder_time_title">Ring time</string>
+    <string name="reminder_time_hint">Format "HH:MM", e.g. 6:00 or 18:30. Minutes may be omitted: 6 = 06:00.</string>
+    <string name="reminder_time_error">Invalid time</string>
+    <string name="button_disable">Disable</string>
+    <string name="reminder_channel">Shift</string>
+    <string name="reminder_channel_desc">Alarm ring on shift days</string>
+    <string name="reminder_title">Shift starts!</string>
+    <string name="reminder_title_day">Working today</string>
+    <string name="reminder_title_night">Night shift tonight</string>
+    <string name="reminder_text">%1$s: %2$s</string>
+    <string name="option_reset">Reset all data</string>
+    <string name="option_reset_confirm">Delete all schedules, colours and events?</string>
+
+    <string name="help_title">HELP</string>
+    <string name="help_section_calendar">Calendar</string>
+    <string name="help_section_calendar_text">The calendar shows up to four schedules at once. Each day cell has a dot per schedule: colour = shift type, letter = first letter of the type name (when enabled). Tap a day for day details.\n\nSwipe left/right to change month. The month and year frames open quick navigation lists.</string>
+    <string name="help_section_schedules">Schedules</string>
+    <string name="help_section_schedules_text">In the Schedules menu: name, seed date and a repeating cycle "N days — shift type". Cycle rows are added and removed with the buttons on the right.</string>
+    <string name="help_section_adhoc">Shift override</string>
+    <string name="help_section_adhoc_text">In the Shift override menu: choose a schedule, a period of dates and the desired type — the type changes for those dates. A new override replaces any overlapping periods of the same schedule.</string>
+    <string name="help_section_types">Shift types and colours</string>
+    <string name="help_section_types_text">"Shift types" — the type name and its visibility on the calendar (hidden types are not shown). "Colours" — the dot colour for each "schedule × shift type" pair.</string>
+    <string name="help_section_reminder">Shift alarm</string>
+    <string name="help_section_reminder_text">Enable the "Shift alarm" in Settings and set your own time for each shift type. The app schedules alarms 62 days ahead and restores them after a phone reboot.</string>
+    <string name="help_about">About the app</string>
+    <string name="help_about_sub">App version and credits</string>
+    <string name="dev_title">ABOUT APP</string>
+    <string name="dev_app_subtitle">Track shift schedules on your phone</string>
+    <string name="dev_label">Developer</string>
+    <string name="dev_developer">OvS</string>
+    <string name="dev_version">Version %1$s</string>
+    <string name="dev_license">License</string>
+    <string name="dev_license_badge">MIT</string>
+    <string name="dev_github">GitHub</string>
+    <string name="dev_github_summary">Open source code of the app</string>
+    <string name="dev_support">Support the project</string>
+    <string name="dev_support_summary">If you like the app, support its development — any amount helps</string>
+    <string name="dev_license_summary">The app is free. The source code is open: you may copy, modify and use it, including for commercial purposes, provided the copyright notice is kept.</string>
+    <string name="dev_license_full">MIT License
+
+Copyright (c) 2026 OvS
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</string>
+
+    <string name="day_detail_title">Day details</string>
+    <string name="day_detail_empty">No data</string>
+    <string name="back">Back</string>
+</resources>

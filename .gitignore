@@ -1,0 +1,25 @@
+# Gradle
+.gradle/
+build/
+
+# Local configuration file (sdk path, signing passwords, etc.)
+local.properties
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+.kotlin/
+
+# Keystore files — never commit signing keys
+*.jks
+*.keystore
+keystore/
+
+# Android captures / native build
+captures/
+.externalNativeBuild/
+.cxx/
+
+# OS files
+.DS_Store
+Thumbs.db
