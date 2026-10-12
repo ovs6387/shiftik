@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Shiftik</string>
+    <string name="app_name">Твой график</string>
 
     <string name="cal_title">КАЛЕНДАРЬ СМЕН</string>
     <string name="cal_select">Выбрать:</string>
+    <string name="cal_legend_selected">Выбрано</string>
     <string name="cal_today">СЕГОДНЯ</string>
     <string name="today">Сегодня</string>
 
@@ -41,7 +42,11 @@
     <string name="menu_help">Помощь</string>
     <string name="menu_about">О приложении</string>
 
-    <string name="shift_list_title">РАСПИСАНИЯ</string>
+    <string name="nav_calendar">Календарь</string>
+    <string name="nav_schedules">Графики</string>
+    <string name="nav_more">Ещё</string>
+
+    <string name="shift_list_title">Графики</string>
     <string name="shift_name">Название</string>
     <string name="button_edit">Правка</string>
     <string name="button_add">Добавить</string>
@@ -93,20 +98,41 @@
     <string name="adhoc_pick_hint">Тапните два дня: начало и конец периода</string>
     <string name="adhoc_range">%1$s — %2$s</string>
 
-    <string name="colors_title">ЦВЕТА</string>
+    <string name="colors_title">Цвета смен</string>
+    <string name="colors_badge_default">основной</string>
+    <string name="colors_reset">Сбросить цвета по умолчанию</string>
+    <string name="colors_reset_confirm">Вернуть цвета всех типов к значениям по умолчанию?</string>
+    <string name="colors_info_title">Отображение в календаре</string>
+    <string name="colors_info_text">Цвета используются как плашки и точки под числами дней. Если в дне несколько смен, показывается несколько точек.</string>
     <string name="colors_slot">Расписание</string>
 
+    <string name="opt_section_main">Основные параметры</string>
+    <string name="opt_section_theme">Оформление</string>
+    <string name="opt_section_notify">Уведомления</string>
+    <string name="opt_sound_sub">Аудиоотклик при выборе смены</string>
+    <string name="opt_monday_sub">Первый день недели в сетке</string>
+    <string name="opt_shift_info_sub">Показывать аббревиатуру типа смены</string>
+    <string name="opt_cycle_past_sub">Расчёт циклов до текущей даты</string>
+    <string name="opt_reminder_sub">Уведомление о начале смены</string>
+    <string name="opt_reset_info">Сброс очистит расписания, замены смен и пользовательские цвета.</string>
     <string name="options_title">НАСТРОЙКИ</string>
     <string name="option_sound">Звук кликов</string>
     <string name="option_monday">Неделя начинается с понедельника</string>
     <string name="option_shift_info">Показывать первую букву в кружке</string>
     <string name="option_cycle_past">Смены в прошлое</string>
-    <string name="option_theme">Тема</string>
+    <string name="option_theme">Режим</string>
     <string name="theme_system">Системная</string>
     <string name="theme_light">Светлая</string>
     <string name="theme_dark">Тёмная</string>
+    <string name="option_theme_style">Тема интерфейса</string>
+    <string name="theme_style_classic">Классическая</string>
+    <string name="theme_style_periwinkle">Лазурная</string>
     <string name="option_reminder">Будильник о смене</string>
     <string name="option_reminder_hint">Для каждого типа смены — своё время звонка. По умолчанию: Дневная 06:00, Ночная 17:00. На Выходной и Отпуск будильник не ставится.</string>
+    <string name="option_mirror_clock">Показывать в системных «Часах»</string>
+    <string name="opt_mirror_clock_sub">Будильник появится в списке приложения «Часы» и зазвонит системой</string>
+    <string name="mirror_clock_note_title">Будильники в «Часах»</string>
+    <string name="mirror_clock_note_message">Ранее созданные будильники останутся в системном приложении «Часы». Удалите их вручную, если они больше не нужны.</string>
     <string name="reminder_time_off">Выкл.</string>
     <string name="reminder_time_title">Время звонка</string>
     <string name="reminder_time_hint">Формат «ЧЧ:ММ» — например 6:00 или 18:30. Минуты можно не вводить: 6 = 06:00.</string>
@@ -118,6 +144,13 @@
     <string name="reminder_title_day">Сегодня работаем днем</string>
     <string name="reminder_title_night">Сегодня в ночь</string>
     <string name="reminder_text">%1$s: %2$s</string>
+    <string name="reminder_tpl_section">Текст уведомления по типам</string>
+    <string name="reminder_tpl_title">Заголовок</string>
+    <string name="reminder_tpl_text">Текст</string>
+    <string name="reminder_tpl_save">Сохранить</string>
+    <string name="reminder_tpl_reset">По умолчанию</string>
+    <string name="reminder_tpl_custom">Свой текст</string>
+    <string name="reminder_tpl_hint">Оставьте поле пустым — будет текст по умолчанию. Доступные подстановки: {тип}, {расписание}, {время}, {дата}.</string>
     <string name="option_reset">Сбросить все данные</string>
     <string name="option_reset_confirm">Удалить все расписания, цвета и события?</string>
 
@@ -135,7 +168,7 @@
     <string name="help_section_types">Типы смен и цвета</string>
     <string name="help_section_types_text">«Типы смен» — название типа и его показ на календаре (выключенный тип не отображается). «Цвета» — цвет кружка для каждой пары «расписание × тип смены».</string>
     <string name="help_section_reminder">Будильник о смене</string>
-    <string name="help_section_reminder_text">В настройках включите «Будильник о смене» и задайте своё время для каждого типа смены. Приложение планирует будильники на 62 дня вперёд и восстанавливает их после перезагрузки телефона.</string>
+    <string name="help_section_reminder_text">В настройках включите «Будильник о смене» и задайте своё время для каждого типа смены. Приложение планирует будильники на 62 дня вперёд и восстанавливает их после перезагрузки телефона. При включённой опции будильник также появляется в системных «Часах» и звонит средствами системы.</string>
     <string name="help_about">О приложении</string>
     <string name="help_about_sub">Версия приложения и автор</string>
     <string name="dev_title">О ПРИЛОЖЕНИИ</string>

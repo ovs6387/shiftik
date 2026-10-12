@@ -19,7 +19,14 @@ class ReminderReceiver : BroadcastReceiver() {
             ReminderScheduler.ACTION_REMINDER -> {
                 val epoch = intent.getLongExtra(ReminderScheduler.EXTRA_DATE, -1L)
                 val type = intent.getIntExtra(ReminderScheduler.EXTRA_TYPE, -1)
-                if (epoch >= 0 && type in 0..8) ReminderScheduler.showReminder(context, epoch, type)
+                if (epoch >= 0 && type in 0..8) {
+                    ReminderScheduler.showReminder(context, epoch, type)
+                    // Зеркальный будильник в «Часах» отзвенел — снимаем его, чтобы
+                    // запись не оставалась в списке (перепланировка ниже поставит следующую).
+                    SystemAlarmMirror.dismissFired(context)
+                    val state = ShiftRepository(context).state.value
+                    ReminderScheduler.scheduleAll(context, state)
+                }
             }
         }
     }

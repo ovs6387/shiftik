@@ -80,7 +80,7 @@ fun HelpScreen(
                         .clickable(onClick = onOpenDeveloper),
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
                     ),
                 ) {
                     Row(
@@ -121,7 +121,7 @@ private fun HelpCard(title: String, text: String) {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
         ),
     ) {
         Column(modifier = Modifier.padding(14.dp)) {

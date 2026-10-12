@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Light & Crisp Base Background with gentle dual-theme ambient tint -->
+    <linearGradient id="lightBgCanvas" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="50%" stop-color="#F8FAFC"/>
+      <stop offset="100%" stop-color="#EEF2F6"/>
+    </linearGradient>
+
+    <!-- Light Clean Frosted Glass Tile Surface -->
+    <linearGradient id="lightGlassTile" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#F8FAFC" stop-opacity="0.85"/>
+    </linearGradient>
+
+    <!-- Glowing theme gradients for light widgets -->
+    <linearGradient id="blueTileGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+
+    <linearGradient id="amberTileGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+
+    <linearGradient id="nightTileGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#1E293B"/>
+    </linearGradient>
+
+    <linearGradient id="sageTileGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+
+    <!-- Soft ambient tile shadows -->
+    <filter id="tileShadowLight" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#0F172A" flood-opacity="0.08"/>
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0F172A" flood-opacity="0.04"/>
+    </filter>
+
+    <filter id="centerPillShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#1E293B" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Squircle Canvas Base (Clean light border) -->
+  <rect x="32" y="32" width="448" height="448" rx="112" fill="url(#lightBgCanvas)" stroke="#E2E8F0" stroke-width="3"/>
+
+  <!-- Subtle ambient pastel aura linking both blue & sage themes -->
+  <circle cx="150" cy="150" r="110" fill="#DBEAFE" opacity="0.6"/>
+  <circle cx="360" cy="360" r="110" fill="#D1FAE5" opacity="0.6"/>
+
+  <!-- 4 Modular Light Bento Tiles -->
+
+  <!-- Tile 1: Top-Left (Calendar - Periwinkle Blue Theme) -->
+  <g filter="url(#tileShadowLight)">
+    <rect x="96" y="96" width="144" height="144" rx="36" fill="url(#lightGlassTile)" stroke="#BAE6FD" stroke-width="2"/>
+    <!-- Calendar Mini Widget -->
+    <rect x="124" y="122" width="88" height="84" rx="18" fill="url(#blueTileGrad)"/>
+    <rect x="136" y="112" width="10" height="18" rx="5" fill="#FFFFFF"/>
+    <rect x="190" y="112" width="10" height="18" rx="5" fill="#FFFFFF"/>
+    <!-- Day dots inside calendar -->
+    <circle cx="148" cy="156" r="6" fill="#FFFFFF"/>
+    <circle cx="168" cy="156" r="6" fill="#FEF08A"/>
+    <circle cx="188" cy="156" r="6" fill="#FFFFFF"/>
+    <circle cx="148" cy="178" r="6" fill="#FFFFFF"/>
+    <circle cx="168" cy="178" r="7" fill="#FFFFFF" stroke="#0284C7" stroke-width="3"/>
+    <circle cx="188" cy="178" r="6" fill="#FFFFFF" opacity="0.7"/>
+    <!-- Small label -->
+    <text x="168" y="222" text-anchor="middle" fill="#0369A1" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="12" letter-spacing="1">ГРАФИК</text>
+  </g>
+
+  <!-- Tile 2: Top-Right (Day Shift - Warm Solar Amber) -->
+  <g filter="url(#tileShadowLight)">
+    <rect x="272" y="96" width="144" height="144" rx="36" fill="url(#lightGlassTile)" stroke="#FDE68A" stroke-width="2"/>
+    <!-- Sun / Day Shift Glyph with Soft Warm Aura -->
+    <circle cx="344" cy="156" r="34" fill="#FEF3C7"/>
+    <circle cx="344" cy="156" r="24" fill="url(#amberTileGrad)"/>
+    <circle cx="344" cy="156" r="10" fill="#FFFFFF"/>
+    <!-- Day Shift Label -->
+    <text x="344" y="214" text-anchor="middle" fill="#B45309" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="15" letter-spacing="1">ДЕНЬ</text>
+  </g>
+
+  <!-- Tile 3: Bottom-Left (Night Shift - Elegant Indigo & Crescent Moon) -->
+  <g filter="url(#tileShadowLight)">
+    <rect x="96" y="272" width="144" height="144" rx="36" fill="url(#lightGlassTile)" stroke="#CBD5E1" stroke-width="2"/>
+    <!-- Crescent Moon Badge on crisp soft slate background -->
+    <circle cx="168" cy="330" r="30" fill="#F1F5F9"/>
+    <circle cx="168" cy="330" r="22" fill="url(#nightTileGrad)"/>
+    <circle cx="178" cy="324" r="18" fill="#F1F5F9"/>
+    <!-- Small star sparkle -->
+    <circle cx="184" cy="318" r="3" fill="#60A5FA"/>
+    <!-- Night Shift Label -->
+    <text x="168" y="390" text-anchor="middle" fill="#334155" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="15" letter-spacing="1">НОЧЬ</text>
+  </g>
+
+  <!-- Tile 4: Bottom-Right (Rest / Off-duty - Fresh Sage Emerald) -->
+  <g filter="url(#tileShadowLight)">
+    <rect x="272" y="272" width="144" height="144" rx="36" fill="url(#lightGlassTile)" stroke="#A7F3D0" stroke-width="2"/>
+    <!-- Rest Checkmark Badge with Sage Palette -->
+    <circle cx="344" cy="330" r="34" fill="#ECFDF5"/>
+    <circle cx="344" cy="330" r="24" fill="url(#sageTileGrad)"/>
+    <polyline points="334,330 341,337 355,323" fill="none" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Rest Label -->
+    <text x="344" y="390" text-anchor="middle" fill="#047857" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="15" letter-spacing="1">ОТДЫХ</text>
+  </g>
+
+  <!-- Central Floating Shift Handover Hub / Connecting Node -->
+  <g filter="url(#centerPillShadow)">
+    <circle cx="256" cy="256" r="22" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="3"/>
+    <circle cx="256" cy="256" r="12" fill="#2563EB"/>
+    <circle cx="256" cy="256" r="4.5" fill="#FFFFFF"/>
+  </g>
+</svg>

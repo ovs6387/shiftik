@@ -98,7 +98,10 @@ class ShiftRepository(context: Context) {
             extendPast = prefs.getBoolean("opt_cycle_past", false),
             reminderEnabled = prefs.getBoolean("opt_reminder", false),
             reminderTimes = loadReminderTimes(),
+            reminderTemplates = loadReminderTemplates(),
+            mirrorToSystemClock = prefs.getBoolean("opt_mirror_clock", true),
             themeMode = prefs.getInt("opt_theme", 0),
+            themeStyle = loadThemeStyle(),
         )
         return AppState(
             shiftTypes = shiftTypes,
@@ -131,6 +134,88 @@ class ShiftRepository(context: Context) {
             return defaultReminderTimes.mapValues { oldHour to oldMinute }
         }
         return defaultReminderTimes
+    }
+
+    /** Шаблоны уведомлений по типам из строки "0|title|text\u001F1|title|text" (эскейпинг \\ \p \u). */
+    private fun loadReminderTemplates(): Map<Int, ReminderTemplate> {
+        val raw = prefs.getString("opt_reminder_templates", null) ?: return emptyMap()
+        val result = mutableMapOf<Int, ReminderTemplate>()
+        for (record in raw.split('\u001F')) {
+            if (record.isBlank()) continue
+            val parts = splitEscaped(record, '|')
+            if (parts.size < 3) continue
+            val type = parts[0].toIntOrNull() ?: continue
+            if (type !in 0..8) continue
+            result[type] = ReminderTemplate(unescape(parts[1]), unescape(parts[2]))
+        }
+        return result
+    }
+
+    private fun escape(s: String): String = s
+        .replace("\\", "\\\\")
+        .replace("|", "\\p")
+        .replace("\u001F", "\\u")
+
+    private fun unescape(s: String): String {
+        val sb = StringBuilder()
+        var i = 0
+        while (i < s.length) {
+            val c = s[i]
+            if (c == '\\' && i + 1 < s.length) {
+                when (s[i + 1]) {
+                    '\\' -> sb.append('\\')
+                    'p' -> sb.append('|')
+                    'u' -> sb.append('\u001F')
+                    else -> sb.append(s[i + 1])
+                }
+                i += 2
+            } else {
+                sb.append(c); i++
+            }
+        }
+        return sb.toString()
+    }
+
+    /** Разбиение по [delim], игнорируя экранированные (с обратным слэшем) символы. */
+    private fun splitEscaped(s: String, delim: Char): List<String> {
+        val out = mutableListOf<String>()
+        val sb = StringBuilder()
+        var i = 0
+        while (i < s.length) {
+            val c = s[i]
+            if (c == '\\' && i + 1 < s.length) {
+                sb.append(c).append(s[i + 1]); i += 2
+            } else if (c == delim) {
+                out.add(sb.toString()); sb.clear(); i++
+            } else {
+                sb.append(c); i++
+            }
+        }
+        out.add(sb.toString())
+        return out
+    }
+
+    /**
+     * Оформление интерфейса. До отказа от темы SYSTEM индексы были на 1 больше
+     * (0 SYSTEM, 1 CLASSIC, ...) — одноразовая миграция. После сокращения набора тем
+     * до двух (CLASSIC/PERIWINKLE) значения 2 и 3 (бывшие TERRA/ALEXANDRIA) → CLASSIC.
+     * По умолчанию CLASSIC.
+     */
+    private fun loadThemeStyle(): Int {
+        val raw = prefs.getInt("opt_theme_style", -1)
+        if (raw < 0) {
+            prefs.edit().putBoolean("opt_theme_style_migrated", true).apply()
+            return 0
+        }
+        if (!prefs.getBoolean("opt_theme_style_migrated", false)) {
+            val migrated = (raw - 1).coerceAtLeast(0)
+            prefs.edit()
+                .putInt("opt_theme_style", migrated)
+                .putBoolean("opt_theme_style_migrated", true)
+                .apply()
+            return migrated
+        }
+        return raw.coerceIn(0, 1)
     }
 
     // ---------------- сохранение ----------------
@@ -221,6 +306,14 @@ class ShiftRepository(context: Context) {
         _state.value = st.copy(colors = table)
     }
 
+    /** Сброс всех пользовательских цветов к значениям по умолчанию. */
+    fun resetColors() {
+        val e = prefs.edit()
+        for (slot in 1..4) for (t in 0..8) e.remove("color_${slot}_$t")
+        e.apply()
+        _state.value = _state.value.copy(colors = ColorTable())
+    }
+
     fun updateSettings(settings: Settings) {
         val st = _state.value
         prefs.edit()
@@ -229,12 +322,20 @@ class ShiftRepository(context: Context) {
             .putBoolean("opt_shift_info", settings.showShiftInitial)
             .putBoolean("opt_cycle_past", settings.extendPast)
             .putBoolean("opt_reminder", settings.reminderEnabled)
+            .putBoolean("opt_mirror_clock", settings.mirrorToSystemClock)
             .putInt("opt_theme", settings.themeMode)
+            .putInt("opt_theme_style", settings.themeStyle)
             .putString(
                 "opt_reminder_times",
                 settings.reminderTimes.entries
                     .sortedBy { it.key }
                     .joinToString(",") { "${it.key}:${it.value.first * 60 + it.value.second}" },
+            )
+            .putString(
+                "opt_reminder_templates",
+                settings.reminderTemplates.entries
+                    .sortedBy { it.key }
+                    .joinToString("\u001F") { "${it.key}|${escape(it.value.title)}|${escape(it.value.text)}" },
             )
             .apply()
         _state.value = st.copy(settings = settings)

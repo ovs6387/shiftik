@@ -24,6 +24,7 @@ import dev.shiftcalendar.app.data.ShiftRepository
 import dev.shiftcalendar.app.reminder.ReminderScheduler
 import dev.shiftcalendar.app.ui.ShiftCalendarApp
 import dev.shiftcalendar.app.ui.theme.ShiftCalendarTheme
+import dev.shiftcalendar.app.ui.theme.appThemeStyleOf
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -52,7 +53,10 @@ class MainActivity : ComponentActivity() {
                         !ReminderScheduler.canScheduleExactAlarms(this@MainActivity)
                 )
             }
-            ShiftCalendarTheme(darkTheme = darkTheme) {
+            ShiftCalendarTheme(
+                darkTheme = darkTheme,
+                style = appThemeStyleOf(app.settings.themeStyle),
+            ) {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     ShiftCalendarApp(repository)
                 }

@@ -39,25 +39,28 @@ import androidx.compose.ui.unit.dp
 import dev.shiftcalendar.app.R
 import dev.shiftcalendar.app.data.ShiftRepository
 import dev.shiftcalendar.app.data.ScheduleRow
-import dev.shiftcalendar.app.ui.components.BackTopBar
+import dev.shiftcalendar.app.ui.components.AppTopBar
+import androidx.compose.foundation.layout.WindowInsets
 import dev.shiftcalendar.app.ui.components.scheduleTitle
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun SchedulesScreen(
     repository: ShiftRepository,
-    onBack: () -> Unit,
     onEdit: (Int) -> Unit,
 ) {
     val app by repository.state.collectAsState()
     var purgeId by remember { mutableStateOf<Int?>(null) }
 
-    Scaffold(topBar = { BackTopBar(stringResource(R.string.shift_list_title), onBack) }) { padding ->
+    Scaffold(
+        topBar = { AppTopBar(stringResource(R.string.shift_list_title)) },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+    ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(12.dp),
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             itemsIndexed(app.schedules) { index, schedule ->
@@ -112,7 +115,7 @@ private fun ScheduleCard(
             .fillMaxWidth()
             .clickable(onClick = onEdit),
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {

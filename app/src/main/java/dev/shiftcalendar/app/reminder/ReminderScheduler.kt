@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
@@ -16,6 +17,7 @@ import dev.shiftcalendar.app.data.Settings
 import dev.shiftcalendar.app.data.nonWorkShiftTypes
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 /** Планировщик будильников о смене: свой будильник на каждый (день, тип смены). */
 object ReminderScheduler {
@@ -27,6 +29,8 @@ object ReminderScheduler {
     private const val CHANNEL_ID = "shift_reminder"
     private const val HORIZON_DAYS = 62L
     private const val TYPES_COUNT = 9
+    private const val PREFS_NAME = "shift_calendar"
+    private const val POSTED_KEY = "opt_reminder_posted"
 
     /** Проверяет, может ли приложение ставить точные будильники (Android 12+). */
     fun canScheduleExactAlarms(context: Context): Boolean {
@@ -72,6 +76,14 @@ object ReminderScheduler {
                 }
             }
         }
+
+        // Будильник выключен — снимаем из шторки ранее показанные уведомления о смене.
+        if (!settings.reminderEnabled) {
+            cancelShownReminders(context)
+        }
+
+        // Зеркало в системные «Часы»: ближайшая смена по типу, переустановка при изменении.
+        SystemAlarmMirror.mirrorAll(context, state)
     }
 
     /** (тип, время) для дня: типы дня по слотам, у которых задано время будильника. */
@@ -91,6 +103,41 @@ object ReminderScheduler {
         0 -> context.getString(R.string.reminder_title_day)
         1 -> context.getString(R.string.reminder_title_night)
         else -> context.getString(R.string.reminder_title)
+    }
+
+    /**
+     * Заголовок и текст уведомления для (тип, дата): из пользовательского шаблона
+     * (с подстановками), а при пустом поле — значение по умолчанию (поведение 1.0).
+     */
+    fun resolveNotification(context: Context, state: AppState, type: Int, date: LocalDate): Pair<String, String> {
+        val typeName = state.shiftTypes.getOrNull(type)?.name.orEmpty()
+        val scheduleList = mutableListOf<String>()
+        for (slot in 1..4) {
+            if (state.dayType(slot, date) != type) continue
+            val schedule = state.schedules.getOrNull(slot - 1)
+            scheduleList += schedule?.title?.takeIf { it.isNotBlank() }
+                ?: context.getString(R.string.slot_name, slot)
+        }
+        val schedules = scheduleList.joinToString(", ")
+        val time = state.settings.reminderTimes[type]
+            ?.let { String.format("%02d:%02d", it.first, it.second) }.orEmpty()
+        val dateStr = date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+
+        fun apply(s: String): String = s
+            .replace("{тип}", typeName).replace("{type}", typeName)
+            .replace("{расписание}", schedules).replace("{schedule}", schedules)
+            .replace("{время}", time).replace("{time}", time)
+            .replace("{дата}", dateStr).replace("{date}", dateStr)
+
+        val defaultTitle = titleForType(context, type)
+        val defaultText =
+            if (schedules.isBlank()) defaultTitle
+            else context.getString(R.string.reminder_text, typeName, schedules)
+
+        val template = state.settings.reminderTemplates[type]
+        val title = template?.title?.takeIf { it.isNotBlank() }?.let { apply(it) } ?: defaultTitle
+        val text = template?.text?.takeIf { it.isNotBlank() }?.let { apply(it) } ?: defaultText
+        return title to text
     }
 
     private fun pendingIntent(context: Context, date: LocalDate, today: LocalDate, type: Int): PendingIntent {
@@ -123,6 +170,10 @@ object ReminderScheduler {
                 AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_ALARM)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    // «Будильник обязан быть слышимым»: ОС учитывает флаг при
+                    // маршрутизации — не сбрасывает на тихий/фоновый вывод, а
+                    // ведёт через слышимый (динамики телефона), даже при BT-наушниках.
+                    .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
                     .build(),
             )
             enableVibration(true)
@@ -137,18 +188,7 @@ object ReminderScheduler {
         ensureChannel(context)
         val date = LocalDate.ofEpochDay(dateEpochDay)
         val state = dev.shiftcalendar.app.data.ShiftRepository(context).state.value
-        val typeName = state.shiftTypes.getOrNull(type)?.name ?: ""
-        val schedules = mutableListOf<String>()
-        for (slot in 1..4) {
-            if (state.dayType(slot, date) != type) continue
-            val schedule = state.schedules.getOrNull(slot - 1)
-            schedules += schedule?.title?.takeIf { it.isNotBlank() }
-                ?: context.getString(R.string.slot_name, slot)
-        }
-        val text = schedules.joinToString(", ").let { list ->
-            if (list.isBlank()) context.getString(R.string.reminder_title)
-            else context.getString(R.string.reminder_text, typeName, list)
-        }
+        val (title, text) = resolveNotification(context, state, type, date)
         val openIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
@@ -166,9 +206,13 @@ object ReminderScheduler {
         }
         val notification = android.app.Notification.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_shift)
-            .setContentTitle(titleForType(context, type))
+            .setContentTitle(title)
             .setContentText(text)
-            .setStyle(android.app.Notification.BigTextStyle().bigText(text))
+            .setStyle(
+                android.app.Notification.BigTextStyle()
+                    .setBigContentTitle(title)
+                    .bigText(text),
+            )
             .setAutoCancel(true)
             .setCategory(android.app.Notification.CATEGORY_ALARM)
             .setContentIntent(openPending)
@@ -176,5 +220,40 @@ object ReminderScheduler {
             .build()
         context.getSystemService(NotificationManager::class.java)
             .notify(notificationId, notification)
+        recordPosted(context, notificationId)
+    }
+
+    // ---------------- снятие показанных уведомлений ----------------
+
+    /**
+     * Снимает из шторки все ранее показанные уведомления о смене. Вызывается при
+     * выключении будильника, чтобы «Начинается смена!» не висело после отключения.
+     */
+    fun cancelShownReminders(context: Context) {
+        val prefs = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val ids = loadPosted(prefs)
+        if (ids.isEmpty()) return
+        val nm = context.getSystemService(NotificationManager::class.java)
+        for (id in ids) {
+            try {
+                nm.cancel(id)
+            } catch (e: Exception) {
+                // Уведомление уже снято или недоступно — не критично.
+            }
+        }
+        prefs.edit().remove(POSTED_KEY).apply()
+    }
+
+    private fun loadPosted(prefs: SharedPreferences): List<Int> =
+        (prefs.getString(POSTED_KEY, null) ?: "")
+            .split(',')
+            .mapNotNull { it.toIntOrNull() }
+
+    private fun recordPosted(context: Context, id: Int) {
+        val prefs = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val ids = loadPosted(prefs).toMutableList()
+        if (id in ids) return
+        ids += id
+        prefs.edit().putString(POSTED_KEY, ids.sorted().joinToString(",")).apply()
     }
 }

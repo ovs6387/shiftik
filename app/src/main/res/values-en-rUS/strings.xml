@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Shiftik</string>
+    <string name="app_name">Tvoy Grafik</string>
 
     <string name="cal_title">SHIFT CALENDAR</string>
     <string name="cal_select">Select:</string>
+    <string name="cal_legend_selected">Selected</string>
     <string name="cal_today">TODAY</string>
     <string name="today">Today</string>
 
@@ -41,7 +42,11 @@
     <string name="menu_help">Help</string>
     <string name="menu_about">About app</string>
 
-    <string name="shift_list_title">SCHEDULES</string>
+    <string name="nav_calendar">Calendar</string>
+    <string name="nav_schedules">Schedules</string>
+    <string name="nav_more">More</string>
+
+    <string name="shift_list_title">Schedules</string>
     <string name="shift_name">Name</string>
     <string name="button_edit">Edit</string>
     <string name="button_add">Add</string>
@@ -93,20 +98,41 @@
     <string name="adhoc_pick_hint">Tap two days: period start and end</string>
     <string name="adhoc_range">%1$s — %2$s</string>
 
-    <string name="colors_title">COLOURS</string>
+    <string name="colors_title">Shift colours</string>
+    <string name="colors_badge_default">default</string>
+    <string name="colors_reset">Reset colours to default</string>
+    <string name="colors_reset_confirm">Reset all shift colours to their default values?</string>
+    <string name="colors_info_title">Calendar display</string>
+    <string name="colors_info_text">Colours are used as markers and dots under the day numbers. If a day has several shifts, several dots are shown.</string>
     <string name="colors_slot">Schedule</string>
 
+    <string name="opt_section_main">Main settings</string>
+    <string name="opt_section_theme">Appearance</string>
+    <string name="opt_section_notify">Notifications</string>
+    <string name="opt_sound_sub">Sound feedback on shift selection</string>
+    <string name="opt_monday_sub">First day of week in the grid</string>
+    <string name="opt_shift_info_sub">Show the shift type abbreviation</string>
+    <string name="opt_cycle_past_sub">Compute cycles before the start date</string>
+    <string name="opt_reminder_sub">Notification when a shift starts</string>
+    <string name="opt_reset_info">Reset will clear schedules, shift overrides and custom colours.</string>
     <string name="options_title">OPTIONS</string>
     <string name="option_sound">Click sound</string>
     <string name="option_monday">Week starts on Monday</string>
     <string name="option_shift_info">Show first letter in the dot</string>
     <string name="option_cycle_past">Shifts into the past</string>
-    <string name="option_theme">Theme</string>
+    <string name="option_theme">Mode</string>
     <string name="theme_system">System</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+    <string name="option_theme_style">Interface theme</string>
+    <string name="theme_style_classic">Classic</string>
+    <string name="theme_style_periwinkle">Periwinkle</string>
     <string name="option_reminder">Shift alarm</string>
     <string name="option_reminder_hint">Each shift type has its own ring time. Defaults: Day 06:00, Night 17:00. No alarm on Day off and Holiday.</string>
+    <string name="option_mirror_clock">Show in system Clock</string>
+    <string name="opt_mirror_clock_sub">The alarm appears in the Clock app list and rings with the system sound</string>
+    <string name="mirror_clock_note_title">Alarms in Clock</string>
+    <string name="mirror_clock_note_message">Previously created alarms stay in the system Clock app. Delete them manually there if they are no longer needed.</string>
     <string name="reminder_time_off">Off</string>
     <string name="reminder_time_title">Ring time</string>
     <string name="reminder_time_hint">Format "HH:MM", e.g. 6:00 or 18:30. Minutes may be omitted: 6 = 06:00.</string>
@@ -118,6 +144,13 @@
     <string name="reminder_title_day">Working today</string>
     <string name="reminder_title_night">Night shift tonight</string>
     <string name="reminder_text">%1$s: %2$s</string>
+    <string name="reminder_tpl_section">Notification text by type</string>
+    <string name="reminder_tpl_title">Title</string>
+    <string name="reminder_tpl_text">Message</string>
+    <string name="reminder_tpl_save">Save</string>
+    <string name="reminder_tpl_reset">Default</string>
+    <string name="reminder_tpl_custom">Custom text</string>
+    <string name="reminder_tpl_hint">Leave a field empty to use the default text. Available placeholders: {type}, {schedule}, {time}, {date}.</string>
     <string name="option_reset">Reset all data</string>
     <string name="option_reset_confirm">Delete all schedules, colours and events?</string>
 
@@ -135,7 +168,7 @@
     <string name="help_section_types">Shift types and colours</string>
     <string name="help_section_types_text">"Shift types" — the type name and its visibility on the calendar (hidden types are not shown). "Colours" — the dot colour for each "schedule × shift type" pair.</string>
     <string name="help_section_reminder">Shift alarm</string>
-    <string name="help_section_reminder_text">Enable the "Shift alarm" in Settings and set your own time for each shift type. The app schedules alarms 62 days ahead and restores them after a phone reboot.</string>
+    <string name="help_section_reminder_text">Enable the "Shift alarm" in Settings and set your own time for each shift type. The app schedules alarms 62 days ahead and restores them after a phone reboot. When enabled, the alarm also appears in the system Clock app and rings with the system.</string>
     <string name="help_about">About the app</string>
     <string name="help_about_sub">App version and credits</string>
     <string name="dev_title">ABOUT APP</string>

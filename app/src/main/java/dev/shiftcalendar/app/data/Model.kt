@@ -79,8 +79,24 @@ data class Settings(
     var reminderEnabled: Boolean = false,
     /** Своё время будильника для каждого типа смены: id типа -> (час, минута). */
     var reminderTimes: Map<Int, Pair<Int, Int>> = defaultReminderTimes,
+    /** Шаблон текста уведомления по типу смены: id типа -> шаблон. Пустые поля = значение по умолчанию. */
+    var reminderTemplates: Map<Int, ReminderTemplate> = emptyMap(),
+    /** Зеркалировать будильник в системные «Часы» (AlarmClock): по одному на тип — ближайшая смена. */
+    var mirrorToSystemClock: Boolean = true,
     /** Тема: 0 — системная, 1 — светлая, 2 — тёмная. */
     var themeMode: Int = 0,
+    /** Оформление интерфейса: индекс AppThemeStyle (0 CLASSIC, 1 PERIWINKLE). */
+    var themeStyle: Int = 0,
+)
+
+/**
+ * Редактируемый шаблон уведомления будильника для одного типа смены.
+ * Пустая строка поля = значение по умолчанию (поведение 1.0). Поддерживает подстановки:
+ * {тип}/{type}, {расписание}/{schedule}, {время}/{time}, {дата}/{date}.
+ */
+data class ReminderTemplate(
+    var title: String = "",
+    var text: String = "",
 )
 
 /** Хранилище цветов: ключ (слот, тип) -> ARGB-целое. */

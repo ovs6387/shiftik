@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Today
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Menu
@@ -41,6 +43,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -55,6 +58,7 @@ import androidx.compose.ui.unit.sp
 import dev.shiftcalendar.app.R
 import dev.shiftcalendar.app.data.AppState
 import dev.shiftcalendar.app.data.defaultTypeColors
+import dev.shiftcalendar.app.ui.components.AppTopBar
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -65,13 +69,13 @@ import java.util.Locale
 @Composable
 fun CalendarScreen(
     vm: CalendarViewModel,
-    onMenu: () -> Unit,
 ) {
     val state by vm.state.collectAsState()
 
     Scaffold(
-        topBar = { CalendarTopBar(onMenu = onMenu) },
+        topBar = { AppTopBar(stringResource(R.string.cal_title)) },
         bottomBar = { TodayBar(onClick = vm::goToday) },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
         Column(
             modifier = Modifier
@@ -107,12 +111,15 @@ fun CalendarScreen(
                 onSelectYear = vm::selectYear,
                 onDismissPopup = vm::closePopups,
             )
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(20.dp))
             WeekdayHeader(app = state.app)
+            Spacer(Modifier.height(12.dp))
             CalendarGrid(
                 state = state,
                 onClickDay = vm::selectDay,
             )
+            Spacer(Modifier.height(24.dp))
+            LegendRow()
         }
     }
 
@@ -124,25 +131,6 @@ fun CalendarScreen(
             onDismiss = vm::dismissDay,
         )
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun CalendarTopBar(onMenu: () -> Unit) {
-    TopAppBar(
-        title = {
-            Text(
-                text = stringResource(R.string.cal_title),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = onMenu) {
-                Icon(Icons.Filled.Menu, contentDescription = stringResource(R.string.menu_options))
-            }
-        },
-    )
 }
 
 @Composable
@@ -160,12 +148,15 @@ private fun MonthSelector(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp, vertical = 2.dp),
+            .padding(horizontal = 20.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(
             onClick = onPrev,
-            modifier = Modifier.size(40.dp),
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceContainerLowest),
         ) {
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack,
@@ -173,7 +164,8 @@ private fun MonthSelector(
                 modifier = Modifier.size(20.dp),
             )
         }
-        Box(modifier = Modifier.weight(2.8f)) {
+        Spacer(Modifier.weight(0.5f))
+        Box(modifier = Modifier.weight(2.4f)) {
             SelectorButton(
                 text = monthName(state.visibleMonth.monthValue),
                 open = state.monthPopupOpen,
@@ -187,7 +179,8 @@ private fun MonthSelector(
                 onDismiss = onDismissPopup,
             )
         }
-        Box(modifier = Modifier.weight(1.2f)) {
+        Spacer(Modifier.weight(0.2f))
+        Box(modifier = Modifier.weight(1.3f)) {
             SelectorButton(
                 text = state.visibleMonth.year.toString(),
                 open = state.yearPopupOpen,
@@ -200,9 +193,13 @@ private fun MonthSelector(
                 onDismiss = onDismissPopup,
             )
         }
+        Spacer(Modifier.weight(0.5f))
         IconButton(
             onClick = onNext,
-            modifier = Modifier.size(40.dp),
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceContainerLowest),
         ) {
             Icon(
                 Icons.AutoMirrored.Filled.ArrowForward,
@@ -222,10 +219,10 @@ private fun SelectorButton(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(4.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(4.dp))
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surfaceContainerLowest)
             .clickable(onClick = onClick)
-            .padding(vertical = 4.dp),
+            .padding(vertical = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -238,7 +235,8 @@ private fun SelectorButton(
             Icon(
                 if (open) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                 contentDescription = null,
-                modifier = Modifier.size(16.dp),
+                modifier = Modifier.size(18.dp),
+                tint = MaterialTheme.colorScheme.secondary,
             )
         }
     }
@@ -251,18 +249,50 @@ private fun WeekdayHeader(app: AppState) {
     } else {
         listOf(R.string.day_sun, R.string.day_mon, R.string.day_tue, R.string.day_wed, R.string.day_thu, R.string.day_fri, R.string.day_sat)
     }
-    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
+    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
         ids.forEach { id ->
             Text(
                 text = stringResource(id),
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
-    HorizontalDivider(modifier = Modifier.padding(vertical = 2.dp))
+}
+
+@Composable
+private fun LegendRow() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        LegendItem(R.string.day_shift, Color(defaultTypeColors[0]))
+        LegendItem(R.string.night_shift, Color(defaultTypeColors[1]))
+        LegendItem(R.string.day_off, Color(defaultTypeColors[2]))
+        LegendItem(R.string.cal_legend_selected, MaterialTheme.colorScheme.primary)
+    }
+}
+
+@Composable
+private fun LegendItem(label: Int, color: Color) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .size(8.dp)
+                .background(color, CircleShape),
+        )
+        Spacer(Modifier.width(5.dp))
+        Text(
+            text = stringResource(label),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
 }
 
 @Composable
@@ -277,15 +307,24 @@ private fun CalendarGrid(
     val first = month.atDay(1).minusDays(offset.toLong())
     val cells = (0 until 42).map { first.plusDays(it.toLong()) }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
         cells.chunked(7).forEach { week ->
-            Row(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
                 week.forEach { date ->
                     DayCell(
                         date = date,
                         app = state.app,
                         isCurrent = date.monthValue == month.monthValue && date.year == month.year,
                         isToday = date == LocalDate.now(),
+                        isSelected = date == state.selectedDay,
                         onClick = { onClickDay(date) },
                         modifier = Modifier.weight(1f).aspectRatio(1f),
                     )
@@ -301,45 +340,41 @@ private fun DayCell(
     app: AppState,
     isCurrent: Boolean,
     isToday: Boolean,
+    isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val bg = if (isCurrent) MaterialTheme.colorScheme.surfaceVariant
-    else MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)
-    val textColor = if (isCurrent) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.secondary
+    val highlighted = isSelected || isToday
+    val bg = when {
+        highlighted -> MaterialTheme.colorScheme.primaryContainer
+        isCurrent -> MaterialTheme.colorScheme.surfaceContainerLowest
+        else -> Color.Transparent
+    }
+    val textColor = when {
+        !isCurrent -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
+        highlighted -> MaterialTheme.colorScheme.onPrimaryContainer
+        else -> MaterialTheme.colorScheme.onSurface
+    }
     Box(
         modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
             .background(bg)
-            .border(0.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f))
             .clickable(onClick = onClick),
         contentAlignment = Alignment.TopCenter,
     ) {
-        Box(
-            modifier = Modifier
-                .padding(top = 2.dp)
-                .then(
-                    if (isToday) {
-                        Modifier
-                            .background(MaterialTheme.colorScheme.primary, CircleShape)
-                            .padding(horizontal = 5.dp)
-                    } else {
-                        Modifier
-                    }
-                ),
-        ) {
-            Text(
-                text = date.dayOfMonth.toString(),
-                color = if (isToday) MaterialTheme.colorScheme.onPrimary else textColor,
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
-            )
-        }
+        Text(
+            text = date.dayOfMonth.toString(),
+            color = textColor,
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = if (highlighted) FontWeight.Bold else FontWeight.Medium,
+            modifier = Modifier.padding(top = 4.dp),
+        )
         DayDots(
             date = date,
             app = app,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 5.dp),
+                .padding(bottom = 6.dp),
         )
     }
 }
@@ -392,18 +427,30 @@ private fun TodayBar(onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .navigationBarsPadding()
-            .clickable(onClick = onClick)
-            .padding(vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = stringResource(R.string.cal_today),
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 2.sp,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
+        Row(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .clickable(onClick = onClick)
+                .padding(horizontal = 32.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                Icons.Filled.Today,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.size(18.dp),
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.today),
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+        }
     }
 }
 

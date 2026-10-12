@@ -133,7 +133,7 @@ private fun AdHocCard(adHoc: AdHoc, vm: AdHocViewModel, modifier: Modifier = Mod
             .fillMaxWidth()
             .clickable { vm.openEdit(adHoc) },
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
     ) {
         Row(
             modifier = Modifier
