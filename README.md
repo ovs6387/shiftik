@@ -52,11 +52,11 @@ Kotlin 2.2 · Jetpack Compose (Material 3) · Navigation Compose · Lifecycle/Vi
 
 | Главный экран | Меню | О приложении |
 |---|---|---|
-| ![Главный экран](docs/screenshots/01-main.png) | ![Меню](docs/screenshots/02-menu.png) | ![О приложении](docs/screenshots/03-about.png) |
+| ![Главный экран](docs/screenshots/01-main-v2.png) | ![Меню](docs/screenshots/02-menu-v2.png) | ![О приложении](docs/screenshots/03-about-v2.png) |
 
 | Помощь | Настройки | Цвета |
 |---|---|---|
-| ![Помощь](docs/screenshots/04-help.png) | ![Настройки](docs/screenshots/05-settings.png) | ![Цвета](docs/screenshots/06-colors.png) |
+| ![Помощь](docs/screenshots/04-help-v2.png) | ![Настройки](docs/screenshots/05-settings-v2.png) | ![Цвета](docs/screenshots/06-colors-v2.png) |
 
 ## Поддержка
 
