@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 
 data class ShiftTypesScreenState(
     val shiftTypes: List<ShiftType> = emptyList(),
+    val colors: Map<Pair<Int, Int>, Int> = emptyMap(),
 )
 
 class ShiftTypesViewModel(
@@ -24,7 +25,10 @@ class ShiftTypesViewModel(
     init {
         viewModelScope.launch {
             repository.state.collect { app ->
-                _state.value = ShiftTypesScreenState(shiftTypes = app.shiftTypes)
+                _state.value = ShiftTypesScreenState(
+                    shiftTypes = app.shiftTypes,
+                    colors = app.colors.colors.toMap(),
+                )
             }
         }
     }

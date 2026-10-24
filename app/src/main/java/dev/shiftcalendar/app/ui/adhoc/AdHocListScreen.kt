@@ -186,21 +186,24 @@ private fun AdHocDialog(state: AdHocScreenState, vm: AdHocViewModel) {
         },
         text = {
             Column {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = stringResource(R.string.adhoc_period) + ":",
-                        modifier = Modifier.weight(1f),
-                    )
-                    OutlinedButton(onClick = vm::requestDatePicker) {
-                        val fmt = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-                        val label = when {
-                            state.start != null && state.end != null ->
-                                state.start!!.format(fmt) + " — " + state.end!!.format(fmt)
-                            state.start != null -> state.start!!.format(fmt) + " — …"
-                            else -> "—"
-                        }
-                        Text(label)
+                Text(
+                    text = stringResource(R.string.adhoc_period) + ":",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.size(4.dp))
+                OutlinedButton(
+                    onClick = vm::requestDatePicker,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    val fmt = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+                    val label = when {
+                        state.start != null && state.end != null ->
+                            state.start!!.format(fmt) + " — " + state.end!!.format(fmt)
+                        state.start != null -> state.start!!.format(fmt) + " — …"
+                        else -> "—"
                     }
+                    Text(label, maxLines = 1)
                 }
                 Spacer(Modifier.size(8.dp))
                 AdHocDropdown(
@@ -231,7 +234,10 @@ private fun AdHocDialog(state: AdHocScreenState, vm: AdHocViewModel) {
             }
         },
         confirmButton = {
-            TextButton(onClick = vm::save) {
+            TextButton(
+                onClick = vm::save,
+                enabled = state.start != null && state.end != null,
+            ) {
                 Text(stringResource(R.string.adhoc_save))
             }
         },

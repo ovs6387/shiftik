@@ -88,7 +88,10 @@ fun ShiftTypesScreen(
                                         modifier = Modifier
                                             .size(18.dp)
                                             .background(
-                                                Color(defaultTypeColors.getOrElse(t.id) { 0xFF8A8A8A.toInt() }),
+                                                Color(
+                                                    state.colors[1 to t.id]
+                                                        ?: defaultTypeColors.getOrElse(t.id) { 0xFF8A8A8A.toInt() }
+                                                ),
                                                 CircleShape,
                                             ),
                                     )

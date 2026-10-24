@@ -119,7 +119,7 @@ fun CalendarScreen(
                 onClickDay = vm::selectDay,
             )
             Spacer(Modifier.height(24.dp))
-            LegendRow()
+            LegendRow(app = state.app)
         }
     }
 
@@ -263,7 +263,11 @@ private fun WeekdayHeader(app: AppState) {
 }
 
 @Composable
-private fun LegendRow() {
+private fun LegendRow(app: AppState) {
+    // Цвета берём из первого (основного) расписания, как в сетке календаря.
+    fun colorOf(type: Int) =
+        Color(app.colors.colors[1 to type] ?: defaultTypeColors.getOrElse(type) { 0xFF8A8A8A.toInt() })
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -271,9 +275,9 @@ private fun LegendRow() {
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        LegendItem(R.string.day_shift, Color(defaultTypeColors[0]))
-        LegendItem(R.string.night_shift, Color(defaultTypeColors[1]))
-        LegendItem(R.string.day_off, Color(defaultTypeColors[2]))
+        LegendItem(R.string.day_shift, colorOf(0))
+        LegendItem(R.string.night_shift, colorOf(1))
+        LegendItem(R.string.day_off, colorOf(2))
         LegendItem(R.string.cal_legend_selected, MaterialTheme.colorScheme.primary)
     }
 }
