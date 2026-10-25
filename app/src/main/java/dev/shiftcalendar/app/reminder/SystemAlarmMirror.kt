@@ -109,8 +109,16 @@ object SystemAlarmMirror {
      * (deleteAfterUse=true), поэтому запись не остаётся в списке и не мусорится.
      * Вызывается в момент срабатывания напоминания, сразу после — mirrorAll поставит
      * следующий будильник на следующую смену.
+     *
+     * ⚠ На MIUI DISMISS_ALARM гасит не только звонящий будильник, но и следующую
+     * запись, поэтому шлём его только когда зеркало этого типа стоит ровно на
+     * сработавшую дату (значит, звонит именно оно). Иначе запись в «Часах» тихо
+     * выключалась бы, а mirrorAll из-за дедупликации её бы не восстановил.
      */
-    fun dismissFired(context: Context) {
+    fun dismissFired(context: Context, type: Int, date: LocalDate) {
+        val prefs = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val stored = loadState(prefs)[type] ?: return
+        if (stored.epochDay != date.toEpochDay()) return
         try {
             context.startActivity(
                 Intent(AlarmClock.ACTION_DISMISS_ALARM)

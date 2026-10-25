@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import dev.shiftcalendar.app.data.ShiftRepository
+import java.time.LocalDate
 
 /** Получает сработавший будильник и перепланирует всё после перезагрузки/обновления. */
 class ReminderReceiver : BroadcastReceiver() {
@@ -23,7 +24,7 @@ class ReminderReceiver : BroadcastReceiver() {
                     ReminderScheduler.showReminder(context, epoch, type)
                     // Зеркальный будильник в «Часах» отзвенел — снимаем его, чтобы
                     // запись не оставалась в списке (перепланировка ниже поставит следующую).
-                    SystemAlarmMirror.dismissFired(context)
+                    SystemAlarmMirror.dismissFired(context, type, LocalDate.ofEpochDay(epoch))
                     val state = ShiftRepository(context).state.value
                     ReminderScheduler.scheduleAll(context, state)
                 }
