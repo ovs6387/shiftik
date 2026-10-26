@@ -17,6 +17,13 @@ class ReminderReceiver : BroadcastReceiver() {
                 ReminderScheduler.scheduleAll(context, state)
             }
 
+            ReminderScheduler.ACTION_MIRROR_REFRESH -> {
+                // Наступил новый день: ставим зеркало на сегодняшние смены и
+                // перепланируем обновление на следующие сутки.
+                val state = ShiftRepository(context).state.value
+                ReminderScheduler.scheduleAll(context, state)
+            }
+
             ReminderScheduler.ACTION_REMINDER -> {
                 val epoch = intent.getLongExtra(ReminderScheduler.EXTRA_DATE, -1L)
                 val type = intent.getIntExtra(ReminderScheduler.EXTRA_TYPE, -1)

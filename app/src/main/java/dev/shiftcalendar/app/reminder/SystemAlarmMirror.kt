@@ -58,6 +58,11 @@ object SystemAlarmMirror {
             for ((type, time) in settings.reminderTimes) {
                 if (type in nonWorkShiftTypes) continue
                 val date = nearestShift(state, type, time) ?: continue
+                // ACTION_SET_ALARM не умеет ставить будильник на конкретную дату: система
+                // берёт ближайшее наступление этого времени (поэтому «на 27.10 17:00»
+                // звонило сегодня в 17:00). Зеркалим только смену сегодняшнего дня —
+                // на будущие дни зеркало поставит ежедневное обновление в 00:01.
+                if (date != LocalDate.now()) continue
                 val message = mirrorMessage(context, state, type, date)
                 val prev = stored[type]
                 if (prev == null ||

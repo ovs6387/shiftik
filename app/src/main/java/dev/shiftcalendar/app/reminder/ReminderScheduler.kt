@@ -23,8 +23,11 @@ import java.time.format.DateTimeFormatter
 object ReminderScheduler {
 
     const val ACTION_REMINDER = "dev.shiftcalendar.app.ACTION_REMINDER"
+    const val ACTION_MIRROR_REFRESH = "dev.shiftcalendar.app.ACTION_MIRROR_REFRESH"
     const val EXTRA_DATE = "date"
     const val EXTRA_TYPE = "type"
+
+    private const val MIRROR_REFRESH_REQUEST = 900_000
 
     private const val CHANNEL_ID = "shift_reminder"
     private const val HORIZON_DAYS = 62L
@@ -84,6 +87,39 @@ object ReminderScheduler {
 
         // Зеркало в системные «Часы»: ближайшая смена по типу, переустановка при изменении.
         SystemAlarmMirror.mirrorAll(context, state)
+
+        // Ежедневное обновление зеркала в «Часах» в 00:01: ACTION_SET_ALARM не умеет
+        // ставить будильник на дату, поэтому зеркало ставится в день смены, а не заранее.
+        if (settings.reminderEnabled && settings.mirrorToSystemClock) {
+            scheduleMirrorRefresh(context, alarm)
+        } else {
+            alarm.cancel(mirrorRefreshPendingIntent(context))
+        }
+    }
+
+    /** Точный аларм на 00:01 (сегодня или завтра), по нему зеркало обновляется на новый день. */
+    private fun scheduleMirrorRefresh(context: Context, alarm: AlarmManager) {
+        val pi = mirrorRefreshPendingIntent(context)
+        alarm.cancel(pi)
+        val now = java.time.LocalDateTime.now()
+        var at = now.toLocalDate().atTime(0, 1)
+        if (!at.isAfter(now)) at = at.plusDays(1)
+        val triggerAt = at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        if (alarm.canScheduleExactAlarms()) {
+            alarm.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pi)
+        } else {
+            alarm.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pi)
+        }
+    }
+
+    private fun mirrorRefreshPendingIntent(context: Context): PendingIntent {
+        val intent = Intent(context, ReminderReceiver::class.java).setAction(ACTION_MIRROR_REFRESH)
+        return PendingIntent.getBroadcast(
+            context,
+            MIRROR_REFRESH_REQUEST,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
     }
 
     /** (тип, время) для дня: типы дня по слотам, у которых задано время будильника. */
