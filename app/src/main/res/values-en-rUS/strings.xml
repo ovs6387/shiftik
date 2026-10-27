@@ -132,6 +132,13 @@
     <string name="option_mirror_clock">Show in system Clock</string>
     <string name="opt_mirror_clock_sub">The alarm appears in the Clock app list and rings with the system sound</string>
     <string name="mirror_clock_note_title">Alarms in Clock</string>
+    <string name="option_mirror_overlay">Background setup in Clock</string>
+    <string name="option_mirror_overlay_on">Allowed</string>
+    <string name="option_mirror_overlay_off">Not allowed — the alarm is set when you open the app</string>
+    <string name="mirror_overlay_note_title">“Display over other apps” permission</string>
+    <string name="mirror_overlay_note_message">It is needed only so the app can add an alarm to the system Clock while in the background: Android blocks this otherwise. The app never draws over other windows.</string>
+    <string name="mirror_overlay_note_ok">Open settings</string>
+    <string name="mirror_overlay_note_cancel">Cancel</string>
     <string name="mirror_clock_note_message">Previously created alarms stay in the system Clock app. Delete them manually there if they are no longer needed.</string>
     <string name="reminder_time_off">Off</string>
     <string name="reminder_time_title">Ring time</string>

@@ -132,6 +132,13 @@
     <string name="option_mirror_clock">Показывать в системных «Часах»</string>
     <string name="opt_mirror_clock_sub">Будильник появится в списке приложения «Часы» и зазвонит системой</string>
     <string name="mirror_clock_note_title">Будильники в «Часах»</string>
+    <string name="option_mirror_overlay">Фоновая установка в «Часах»</string>
+    <string name="option_mirror_overlay_on">Разрешено</string>
+    <string name="option_mirror_overlay_off">Не разрешено — будильник ставится при открытии приложения</string>
+    <string name="mirror_overlay_note_title">Разрешение «Поверх других приложений»</string>
+    <string name="mirror_overlay_note_message">Оно нужно только для того, чтобы приложение могло добавить будильник в системные «Часы», пока оно свёрнуто: иначе Android блокирует такие действия. Приложение ничего не рисует поверх других окон.</string>
+    <string name="mirror_overlay_note_ok">Открыть настройки</string>
+    <string name="mirror_overlay_note_cancel">Отмена</string>
     <string name="mirror_clock_note_message">Ранее созданные будильники останутся в системном приложении «Часы». Удалите их вручную, если они больше не нужны.</string>
     <string name="reminder_time_off">Выкл.</string>
     <string name="reminder_time_title">Время звонка</string>
