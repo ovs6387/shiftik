@@ -137,6 +137,7 @@
     <string name="option_mirror_overlay_off">Не разрешено — будильник ставится при открытии приложения</string>
     <string name="mirror_overlay_note_title">Разрешение «Поверх других приложений»</string>
     <string name="mirror_overlay_note_message">Оно нужно только для того, чтобы приложение могло добавить будильник в системные «Часы», пока оно свёрнуто: иначе Android блокирует такие действия. Приложение ничего не рисует поверх других окон.</string>
+    <string name="mirror_overlay_note_miui">На Xiaomi, Redmi и POCO одного разрешения мало: в карточке приложения откройте «Другие разрешения» и включите «Открывать новые окна, когда запущено в фоновом режиме» → «Всегда разрешать».</string>
     <string name="mirror_overlay_note_ok">Открыть настройки</string>
     <string name="mirror_overlay_note_cancel">Отмена</string>
     <string name="mirror_clock_note_message">Ранее созданные будильники останутся в системном приложении «Часы». Удалите их вручную, если они больше не нужны.</string>

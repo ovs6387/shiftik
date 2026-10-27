@@ -137,6 +137,7 @@
     <string name="option_mirror_overlay_off">Not allowed — the alarm is set when you open the app</string>
     <string name="mirror_overlay_note_title">“Display over other apps” permission</string>
     <string name="mirror_overlay_note_message">It is needed only so the app can add an alarm to the system Clock while in the background: Android blocks this otherwise. The app never draws over other windows.</string>
+    <string name="mirror_overlay_note_miui">On Xiaomi, Redmi and POCO this permission alone is not enough: open the app info screen, then “Other permissions”, and set “Open new windows while running in background” to “Always allow”.</string>
     <string name="mirror_overlay_note_ok">Open settings</string>
     <string name="mirror_overlay_note_cancel">Cancel</string>
     <string name="mirror_clock_note_message">Previously created alarms stay in the system Clock app. Delete them manually there if they are no longer needed.</string>

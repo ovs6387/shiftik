@@ -563,10 +563,12 @@ fun SettingsScreen(repository: ShiftRepository) {
     }
 
     if (showOverlayNote) {
+        val noteBase = stringResource(R.string.mirror_overlay_note_message)
+        val noteMiui = if (isMiui()) stringResource(R.string.mirror_overlay_note_miui) else ""
         AlertDialog(
             onDismissRequest = { showOverlayNote = false },
             title = { Text(stringResource(R.string.mirror_overlay_note_title)) },
-            text = { Text(stringResource(R.string.mirror_overlay_note_message)) },
+            text = { Text(if (noteMiui.isEmpty()) noteBase else "$noteBase\n\n$noteMiui") },
             confirmButton = {
                 TextButton(onClick = {
                     showOverlayNote = false
@@ -837,11 +839,24 @@ private fun formatTime(hour: Int, minute: Int): String =
 private fun canDrawOverlays(context: android.content.Context): Boolean =
     Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context)
 
+/** MIUI (Xiaomi, Redmi, POCO) дополнительно требует своё разрешение
+ *  «Открывать новые окна, когда запущено в фоновом режиме» = «Всегда разрешать». */
+private fun isMiui(): Boolean = Build.MANUFACTURER.equals("Xiaomi", ignoreCase = true)
+
 private fun openOverlaySettings(context: android.content.Context) {
-    val intent = Intent(
-        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-        Uri.parse("package:${context.packageName}"),
-    ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    // На MIUI экран «Поверх других приложений» открывается только списком всех приложений,
+    // а нужное разрешение живёт в «Другие разрешения», поэтому ведём в карточку приложения.
+    val intent = if (isMiui()) {
+        Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.parse("package:${context.packageName}"),
+        )
+    } else {
+        Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            Uri.parse("package:${context.packageName}"),
+        )
+    }.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     try {
         context.startActivity(intent)
     } catch (e: Exception) {
