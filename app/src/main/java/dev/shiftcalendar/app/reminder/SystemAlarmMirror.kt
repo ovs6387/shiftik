@@ -1,9 +1,12 @@
 package dev.shiftcalendar.app.reminder
 
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.provider.AlarmClock
+import android.provider.Settings
 import dev.shiftcalendar.app.data.AppState
 import dev.shiftcalendar.app.data.nonWorkShiftTypes
 import java.time.LocalDate
@@ -16,11 +19,22 @@ import java.time.ZoneId
  * с заданным временем (одиночный будильник, без повтора по дням недели). Переустановка
  * происходит только при изменении времени/текста/даты зеркалируемой смены, чтобы «Часы»
  * не засорялись дублями (платформа не позволяет удалять чужие будущие будильники).
+ *
+ * Ограничения платформы:
+ * - у `ACTION_SET_ALARM` нет даты — будильник ставится на ближайшее наступление времени,
+ *   поэтому зеркалим только «сегодня (время впереди)» или «завтра (время уже прошло)»;
+ * - запуск активности «Часов» из фона блокируется (BAL), поэтому по умолчанию зеркало
+ *   обновляется при открытии приложения; автоматически в 00:01 — только если выдано
+ *   разрешение «Поверх других приложений».
  */
 object SystemAlarmMirror {
 
     private const val PREFS_NAME = "shift_calendar"
     private const val PREFS_KEY = "opt_mirror_clock_state"
+    private const val PREFS_KEY_VERSION = "opt_mirror_clock_state_version"
+
+    /** Версия формата/логики состояния зеркал; при изменении старое состояние игнорируется. */
+    private const val STATE_VERSION = 2
     private const val HORIZON_DAYS = 62L
 
     /** Что было поставлено в «Часы» для типа смены. */
@@ -54,15 +68,24 @@ object SystemAlarmMirror {
         val stored = loadState(prefs)
         val next = mutableMapOf<Int, MirrorState>()
 
-        if (settings.reminderEnabled && settings.mirrorToSystemClock) {
+        val canMirror = canMirrorNow(context)
+        if (settings.reminderEnabled && settings.mirrorToSystemClock && canMirror) {
+            val today = LocalDate.now()
+            val now = java.time.LocalTime.now()
             for ((type, time) in settings.reminderTimes) {
                 if (type in nonWorkShiftTypes) continue
                 val date = nearestShift(state, type, time) ?: continue
                 // ACTION_SET_ALARM не умеет ставить будильник на конкретную дату: система
-                // берёт ближайшее наступление этого времени (поэтому «на 27.10 17:00»
-                // звонило сегодня в 17:00). Зеркалим только смену сегодняшнего дня —
-                // на будущие дни зеркало поставит ежедневное обновление в 00:01.
-                if (date != LocalDate.now()) continue
+                // берёт ближайшее наступление этого времени. Значит, запись будет верной
+                // только если смена — сегодня (время ещё впереди) или завтра (время
+                // сегодня уже прошло). Иначе пропускаем, иначе будильник зазвонит не в тот день.
+                val shiftTime = java.time.LocalTime.of(time.first, time.second)
+                val fitsNextOccurrence = when (date) {
+                    today -> shiftTime > now
+                    today.plusDays(1) -> shiftTime <= now
+                    else -> false
+                }
+                if (!fitsNextOccurrence) continue
                 val message = mirrorMessage(context, state, type, date)
                 val prev = stored[type]
                 if (prev == null ||
@@ -78,6 +101,26 @@ object SystemAlarmMirror {
         }
 
         saveState(prefs, next)
+    }
+
+    /**
+     * Можно ли сейчас ставить будильник в «Часы». `ACTION_SET_ALARM` — это запуск
+     * активности DeskClock, а Android с 10-й версии блокирует запуск активностей из фона
+     * (BAL): в логах «Background activity launch blocked!». Исключение — разрешение
+     * «Поверх других приложений» (SYSTEM_ALERT_WINDOW). Поэтому из фона (например, по
+     * ежедневному обновлению в 00:01) зеркало ставится только при наличии этого
+     * разрешения, иначе — при следующем открытии приложения.
+     */
+    private fun canMirrorNow(context: Context): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(context)) {
+            return true
+        }
+        val am = context.getSystemService(ActivityManager::class.java) ?: return false
+        val processes = am.runningAppProcesses ?: return false
+        return processes.any {
+            it.processName == context.packageName &&
+                it.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE
+        }
     }
 
     /** Ближайшая дата смены [type] от сегодня; сегодня — только если время ещё не наступило. */
@@ -138,6 +181,9 @@ object SystemAlarmMirror {
 
     private fun loadState(prefs: SharedPreferences): Map<Int, MirrorState> {
         val raw = prefs.getString(PREFS_KEY, null) ?: return emptyMap()
+        // Состояние от старой версии логики не используем: в нём могли остаться записи,
+        // которые на самом деле не попали в «Часы» (запуск из фона блокируется системой).
+        if (prefs.getInt(PREFS_KEY_VERSION, 0) != STATE_VERSION) return emptyMap()
         val result = mutableMapOf<Int, MirrorState>()
         for (record in raw.split("\u001F")) {
             val parts = splitEscaped(record, '|')
@@ -154,13 +200,13 @@ object SystemAlarmMirror {
     private fun saveState(prefs: SharedPreferences, next: Map<Int, MirrorState>) {
         val e = prefs.edit()
         if (next.isEmpty()) {
-            e.remove(PREFS_KEY).apply()
+            e.remove(PREFS_KEY).remove(PREFS_KEY_VERSION).apply()
             return
         }
         val raw = next.entries.sortedBy { it.key }.joinToString("\u001F") {
             "${it.key}|${it.value.hour}|${it.value.minute}|${it.value.epochDay}|${escape(it.value.message)}"
         }
-        e.putString(PREFS_KEY, raw).apply()
+        e.putString(PREFS_KEY, raw).putInt(PREFS_KEY_VERSION, STATE_VERSION).apply()
     }
 
     private fun escape(s: String): String = s
