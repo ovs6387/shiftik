@@ -20,9 +20,12 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
-                <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
+        <service
+            android:name=".reminder.MirrorJobService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

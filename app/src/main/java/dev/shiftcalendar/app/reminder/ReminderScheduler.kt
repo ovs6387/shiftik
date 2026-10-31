@@ -93,6 +93,11 @@ object ReminderScheduler {
         // Зеркало в системные «Часы»: ближайшая смена по типу, переустановка при изменении.
         SystemAlarmMirror.mirrorAll(context, state)
 
+        // Досборка зеркала, когда экран разблокирован (см. MirrorJobService).
+        if (settings.reminderEnabled && settings.mirrorToSystemClock) {
+            MirrorJobService.schedule(context)
+        }
+
         // Ежедневное обновление зеркала в «Часах» в 00:01: ACTION_SET_ALARM не умеет
         // ставить будильник на дату, поэтому зеркало ставится в день смены, а не заранее.
         if (settings.reminderEnabled && settings.mirrorToSystemClock) {

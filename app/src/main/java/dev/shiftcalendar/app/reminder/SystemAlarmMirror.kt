@@ -35,7 +35,7 @@ object SystemAlarmMirror {
     private const val PREFS_KEY_VERSION = "opt_mirror_clock_state_version"
 
     /** Версия формата/логики состояния зеркал; при изменении старое состояние игнорируется. */
-    private const val STATE_VERSION = 2
+    private const val STATE_VERSION = 3
     private const val HORIZON_DAYS = 62L
 
     /** Что было поставлено в «Часы» для типа смены. */

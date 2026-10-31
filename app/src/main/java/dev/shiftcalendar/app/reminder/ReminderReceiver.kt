@@ -12,10 +12,7 @@ class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             Intent.ACTION_BOOT_COMPLETED,
-            Intent.ACTION_MY_PACKAGE_REPLACED,
-            // Разблокировка экрана: зеркало в «Часах» можно поставить только когда
-            // экран разблокирован (MIUI запрещает запуск «Часов» при ключе).
-            Intent.ACTION_USER_PRESENT -> {
+            Intent.ACTION_MY_PACKAGE_REPLACED -> {
                 val state = ShiftRepository(context).state.value
                 ReminderScheduler.scheduleAll(context, state)
             }
