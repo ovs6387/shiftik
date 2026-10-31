@@ -73,7 +73,12 @@ object ReminderScheduler {
                 if (triggerAt <= System.currentTimeMillis()) continue
                 val pi = pendingIntent(context, date, today, type)
                 if (alarm.canScheduleExactAlarms()) {
-                    alarm.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pi)
+                    // setAlarmClock, а не setExactAndAllowWhileIdle: такие алармы система
+                    // относит к будильникам — они не откладываются в Doze и MIUI-«заморозке»
+                    // (проверено: setExactAndAllowWhileIdle после нескольких часов простоя
+                    // приходил на ~4 минуты позже, а будильники «Часов» — секунда в секунду).
+                    // Побочный плюс: ближайший будильник виден на экране блокировки.
+                    alarm.setAlarmClock(AlarmManager.AlarmClockInfo(triggerAt, showPendingIntent(context)), pi)
                 } else {
                     alarm.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pi)
                 }
@@ -174,6 +179,19 @@ object ReminderScheduler {
         val title = template?.title?.takeIf { it.isNotBlank() }?.let { apply(it) } ?: defaultTitle
         val text = template?.text?.takeIf { it.isNotBlank() }?.let { apply(it) } ?: defaultText
         return title to text
+    }
+
+    /** Intent «показать будильник»: открывается при нажатии на будильник на экране блокировки. */
+    private fun showPendingIntent(context: Context): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+        return PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
     }
 
     private fun pendingIntent(context: Context, date: LocalDate, today: LocalDate, type: Int): PendingIntent {

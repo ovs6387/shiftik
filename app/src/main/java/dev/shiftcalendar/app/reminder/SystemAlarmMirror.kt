@@ -1,6 +1,7 @@
 package dev.shiftcalendar.app.reminder
 
 import android.app.ActivityManager
+import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -112,6 +113,11 @@ object SystemAlarmMirror {
      * разрешения, иначе — при следующем открытии приложения.
      */
     private fun canMirrorNow(context: Context): Boolean {
+        // Заблокированный экран: MIUI отменяет запуск активности «Часов» даже с
+        // разрешением «Поверх других приложений» — в логах
+        // «MIUILOG- Permission Denied Activity KeyguardLocked» и result code=102.
+        val keyguard = context.getSystemService(KeyguardManager::class.java)
+        if (keyguard != null && keyguard.isKeyguardLocked) return false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(context)) {
             return true
         }
