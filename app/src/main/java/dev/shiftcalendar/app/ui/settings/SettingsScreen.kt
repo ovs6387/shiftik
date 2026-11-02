@@ -1,10 +1,7 @@
 package dev.shiftcalendar.app.ui.settings
 
 import android.Manifest
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -28,7 +25,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
-import androidx.compose.material.icons.filled.AlarmAdd
 import androidx.compose.material.icons.filled.BrightnessAuto
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.DarkMode
@@ -53,7 +49,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,13 +60,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import dev.shiftcalendar.app.R
 import dev.shiftcalendar.app.data.ShiftRepository
 import dev.shiftcalendar.app.data.ReminderTemplate
@@ -93,8 +85,6 @@ fun SettingsScreen(repository: ShiftRepository) {
     var pickerType by remember { mutableStateOf<Int?>(null) }
     var templatePicker by remember { mutableStateOf<Int?>(null) }
     var showExactAlarmDialog by remember { mutableStateOf(false) }
-    var showMirrorNote by remember { mutableStateOf(false) }
-    var showOverlayNote by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -224,8 +214,6 @@ fun SettingsScreen(repository: ShiftRepository) {
                             if (Build.VERSION.SDK_INT >= 33) {
                                 permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                             }
-                        } else if (settings.mirrorToSystemClock) {
-                            showMirrorNote = true
                         }
                         repository.updateSettings(
                             settings.copy(
@@ -236,63 +224,6 @@ fun SettingsScreen(repository: ShiftRepository) {
                     },
                 )
                 if (settings.reminderEnabled) {
-                    SwitchSetting(
-                        icon = Icons.Filled.AlarmAdd,
-                        title = stringResource(R.string.option_mirror_clock),
-                        subtitle = stringResource(R.string.opt_mirror_clock_sub),
-                        checked = settings.mirrorToSystemClock,
-                        onToggle = {
-                            val enable = !settings.mirrorToSystemClock
-                            if (!enable) showMirrorNote = true
-                            repository.updateSettings(settings.copy(mirrorToSystemClock = enable))
-                        },
-                    )
-                    if (settings.mirrorToSystemClock) {
-                        val lifecycleOwner = LocalLifecycleOwner.current
-                        var overlayGranted by remember { mutableStateOf(canDrawOverlays(context)) }
-                        DisposableEffect(lifecycleOwner) {
-                            val observer = LifecycleEventObserver { _, event ->
-                                if (event == Lifecycle.Event.ON_RESUME) {
-                                    overlayGranted = canDrawOverlays(context)
-                                }
-                            }
-                            lifecycleOwner.lifecycle.addObserver(observer)
-                            onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { showOverlayNote = true }
-                                .padding(horizontal = 16.dp, vertical = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = stringResource(R.string.option_mirror_overlay),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                )
-                                Text(
-                                    text = if (overlayGranted) {
-                                        stringResource(R.string.option_mirror_overlay_on)
-                                    } else {
-                                        stringResource(R.string.option_mirror_overlay_off)
-                                    },
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = if (overlayGranted) {
-                                        MaterialTheme.colorScheme.primary
-                                    } else {
-                                        MaterialTheme.colorScheme.onSurfaceVariant
-                                    },
-                                )
-                            }
-                            Icon(
-                                Icons.Filled.ChevronRight,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp))
-                    }
                     val workTypes = app.shiftTypes.filter { it.visible && it.id !in nonWorkShiftTypes }
                     workTypes.forEachIndexed { index, type ->
                         val time = settings.reminderTimes[type.id]
@@ -549,42 +480,6 @@ fun SettingsScreen(repository: ShiftRepository) {
         )
     }
 
-    if (showMirrorNote) {
-        AlertDialog(
-            onDismissRequest = { showMirrorNote = false },
-            title = { Text(stringResource(R.string.mirror_clock_note_title)) },
-            text = { Text(stringResource(R.string.mirror_clock_note_message)) },
-            confirmButton = {
-                TextButton(onClick = { showMirrorNote = false }) {
-                    Text(stringResource(R.string.button_ok))
-                }
-            },
-        )
-    }
-
-    if (showOverlayNote) {
-        val noteBase = stringResource(R.string.mirror_overlay_note_message)
-        val noteMiui = if (isMiui()) stringResource(R.string.mirror_overlay_note_miui) else ""
-        AlertDialog(
-            onDismissRequest = { showOverlayNote = false },
-            title = { Text(stringResource(R.string.mirror_overlay_note_title)) },
-            text = { Text(if (noteMiui.isEmpty()) noteBase else "$noteBase\n\n$noteMiui") },
-            confirmButton = {
-                TextButton(onClick = {
-                    showOverlayNote = false
-                    openOverlaySettings(context)
-                }) {
-                    Text(stringResource(R.string.mirror_overlay_note_ok))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showOverlayNote = false }) {
-                    Text(stringResource(R.string.mirror_overlay_note_cancel))
-                }
-            },
-        )
-    }
-
     if (confirmReset) {
         AlertDialog(
             onDismissRequest = { confirmReset = false },
@@ -833,36 +728,6 @@ private fun themeStyleLabel(style: AppThemeStyle): String = stringResource(
 
 private fun formatTime(hour: Int, minute: Int): String =
     String.format(Locale.getDefault(), "%02d:%02d", hour, minute)
-
-/** Разрешено ли «Поверх других приложений» — единственное исключение Android из запрета
- *  запускать «Часы» из фона (без него зеркало ставится только при открытии приложения). */
-private fun canDrawOverlays(context: android.content.Context): Boolean =
-    Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context)
-
-/** MIUI (Xiaomi, Redmi, POCO) дополнительно требует своё разрешение
- *  «Открывать новые окна, когда запущено в фоновом режиме» = «Всегда разрешать». */
-private fun isMiui(): Boolean = Build.MANUFACTURER.equals("Xiaomi", ignoreCase = true)
-
-private fun openOverlaySettings(context: android.content.Context) {
-    // На MIUI экран «Поверх других приложений» открывается только списком всех приложений,
-    // а нужное разрешение живёт в «Другие разрешения», поэтому ведём в карточку приложения.
-    val intent = if (isMiui()) {
-        Intent(
-            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            Uri.parse("package:${context.packageName}"),
-        )
-    } else {
-        Intent(
-            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            Uri.parse("package:${context.packageName}"),
-        )
-    }.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    try {
-        context.startActivity(intent)
-    } catch (e: Exception) {
-        // Экран настроек недоступен — ничего страшного, зеркало поставится при открытии приложения.
-    }
-}
 
 /** "6" → "6:00", "630" → "6:30", "1830" → "18:30". */
 private fun formatDigits(digits: String): String = when {

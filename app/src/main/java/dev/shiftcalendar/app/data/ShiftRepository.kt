@@ -99,7 +99,6 @@ class ShiftRepository(context: Context) {
             reminderEnabled = prefs.getBoolean("opt_reminder", false),
             reminderTimes = loadReminderTimes(),
             reminderTemplates = loadReminderTemplates(),
-            mirrorToSystemClock = prefs.getBoolean("opt_mirror_clock", true),
             themeMode = prefs.getInt("opt_theme", 0),
             themeStyle = loadThemeStyle(),
         )
@@ -322,7 +321,6 @@ class ShiftRepository(context: Context) {
             .putBoolean("opt_shift_info", settings.showShiftInitial)
             .putBoolean("opt_cycle_past", settings.extendPast)
             .putBoolean("opt_reminder", settings.reminderEnabled)
-            .putBoolean("opt_mirror_clock", settings.mirrorToSystemClock)
             .putInt("opt_theme", settings.themeMode)
             .putInt("opt_theme_style", settings.themeStyle)
             .putString(

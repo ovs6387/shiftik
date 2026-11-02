@@ -129,18 +129,6 @@
     <string name="theme_style_periwinkle">Periwinkle</string>
     <string name="option_reminder">Shift alarm</string>
     <string name="option_reminder_hint">Each shift type has its own ring time. Defaults: Day 06:00, Night 17:00. No alarm on Day off and Holiday.</string>
-    <string name="option_mirror_clock">Show in system Clock</string>
-    <string name="opt_mirror_clock_sub">The alarm appears in the Clock app list and rings with the system sound</string>
-    <string name="mirror_clock_note_title">Alarms in Clock</string>
-    <string name="option_mirror_overlay">Background setup in Clock</string>
-    <string name="option_mirror_overlay_on">Allowed</string>
-    <string name="option_mirror_overlay_off">Not allowed — the alarm is set when you open the app</string>
-    <string name="mirror_overlay_note_title">“Display over other apps” permission</string>
-    <string name="mirror_overlay_note_message">It is needed only so the app can add an alarm to the system Clock while in the background: Android blocks this otherwise. The app never draws over other windows.</string>
-    <string name="mirror_overlay_note_miui">On Xiaomi, Redmi and POCO this permission alone is not enough: open the app info screen, then “Other permissions”, and set “Open new windows while running in background” to “Always allow”.</string>
-    <string name="mirror_overlay_note_ok">Open settings</string>
-    <string name="mirror_overlay_note_cancel">Cancel</string>
-    <string name="mirror_clock_note_message">Previously created alarms stay in the system Clock app. Delete them manually there if they are no longer needed.</string>
     <string name="reminder_time_off">Off</string>
     <string name="reminder_time_title">Ring time</string>
     <string name="reminder_time_hint">Format "HH:MM", e.g. 6:00 or 18:30. Minutes may be omitted: 6 = 06:00.</string>
@@ -176,7 +164,7 @@
     <string name="help_section_types">Shift types and colours</string>
     <string name="help_section_types_text">"Shift types" — the type name and its visibility on the calendar (hidden types are not shown). "Colours" — the dot colour for each "schedule × shift type" pair.</string>
     <string name="help_section_reminder">Shift alarm</string>
-    <string name="help_section_reminder_text">Enable the "Shift alarm" in Settings and set your own time for each shift type. The app schedules alarms 62 days ahead and restores them after a phone reboot. When enabled, the alarm also appears in the system Clock app and rings with the system.</string>
+    <string name="help_section_reminder_text">Enable the "Shift alarm" in Settings and set your own time for each shift type. The app schedules alarms 62 days ahead and restores them after a phone reboot. The next alarm is shown on the lock screen.</string>
     <string name="help_about">About the app</string>
     <string name="help_about_sub">App version and credits</string>
     <string name="dev_title">ABOUT APP</string>
