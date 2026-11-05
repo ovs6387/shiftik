@@ -390,9 +390,30 @@ private fun DayDots(date: LocalDate, app: AppState, modifier: Modifier = Modifie
         app.dayType(slot, date)?.let { type -> slot to type }
     }
     if (slots.isEmpty()) return
+    // Кружки уменьшаются с ростом их числа, чтобы четыре слота помещались в ячейку
+    // шириной ~42dp (7 колонок на экране 360dp).
+    val count = slots.size
+    val dotSize = when (count) {
+        1 -> 10.dp
+        2 -> 9.dp
+        3 -> 8.dp
+        else -> 7.dp
+    }
+    val letterSize = when (count) {
+        1 -> 16.dp
+        2 -> 14.dp
+        3 -> 11.dp
+        else -> 9.dp
+    }
+    val letterFont = when (count) {
+        1 -> 10.sp
+        2 -> 9.sp
+        3 -> 7.sp
+        else -> 6.sp
+    }
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(3.dp),
+        horizontalArrangement = Arrangement.spacedBy(1.5.dp),
     ) {
         slots.forEach { (slot, type) ->
             val color = app.colors.colors[slot to type] ?: defaultTypeColors.getOrElse(type) { 0xFF8A8A8A.toInt() }
@@ -403,22 +424,22 @@ private fun DayDots(date: LocalDate, app: AppState, modifier: Modifier = Modifie
                     if (android.graphics.Color.luminance(color) > 0.5f) Color.Black else Color.White
                 Box(
                     modifier = Modifier
-                        .size(16.dp)
+                        .size(letterSize)
                         .background(Color(color), CircleShape),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = letter,
                         color = letterColor,
-                        fontSize = 10.sp,
-                        lineHeight = 10.sp,
+                        fontSize = letterFont,
+                        lineHeight = letterFont,
                         fontWeight = FontWeight.Bold,
                     )
                 }
             } else {
                 Box(
                     modifier = Modifier
-                        .size(10.dp)
+                        .size(dotSize)
                         .background(Color(color), CircleShape),
                 )
             }
