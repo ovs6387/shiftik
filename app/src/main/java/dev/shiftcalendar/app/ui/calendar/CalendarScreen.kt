@@ -272,30 +272,44 @@ private fun LegendRow(app: AppState) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         LegendItem(R.string.day_shift, colorOf(0))
         LegendItem(R.string.night_shift, colorOf(1))
         LegendItem(R.string.day_off, colorOf(2))
-        LegendItem(R.string.cal_legend_selected, MaterialTheme.colorScheme.primary)
+        LegendItem(R.string.cal_legend_selected, MaterialTheme.colorScheme.primary, highlighted = true)
     }
 }
 
 @Composable
-private fun LegendItem(label: Int, color: Color) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+private fun LegendItem(label: Int, color: Color, highlighted: Boolean = false) {
+    val content: @Composable () -> Unit = {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .background(color, CircleShape),
+            )
+            Spacer(Modifier.width(5.dp))
+            Text(
+                text = stringResource(label),
+                style = MaterialTheme.typography.labelSmall,
+                color = if (highlighted) MaterialTheme.colorScheme.onPrimaryContainer
+                else MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+    if (highlighted) {
+        // Такой же фон, как у выбранного дня в сетке: светло-зелёная плашка.
         Box(
             modifier = Modifier
-                .size(8.dp)
-                .background(color, CircleShape),
-        )
-        Spacer(Modifier.width(5.dp))
-        Text(
-            text = stringResource(label),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .padding(horizontal = 6.dp, vertical = 3.dp),
+        ) { content() }
+    } else {
+        content()
     }
 }
 
